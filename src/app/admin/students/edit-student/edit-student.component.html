@@ -1,4 +1,4 @@
-<section class="content">
+<section class="content" style="height: 90vh; padding: 3%;">
   <div class="content-block">
     <div class="block-header" *ngFor="let breadscrum of breadscrums">
       <!-- breadcrumb -->
@@ -18,8 +18,8 @@
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
                     <mat-label>First name</mat-label>
-                    <input matInput formControlName="first" required>
-                    <mat-error *ngIf="stdForm.get('first')?.hasError('required')">
+                    <input matInput formControlName="firstName" required>
+                    <mat-error *ngIf="stdForm.get('firstName')?.hasError('required')">
                       First name is required
                     </mat-error>
                   </mat-form-field>
@@ -27,34 +27,24 @@
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
                     <mat-label>Last name</mat-label>
-                    <input matInput formControlName="last">
+                    <input matInput formControlName="lastName">
+                    <mat-error *ngIf="stdForm.get('lastName')?.hasError('required')">
+                      Last name is required
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </div>
               <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Roll No</mat-label>
-                    <input matInput formControlName="rollNo">
+                    <mat-label>Country</mat-label>
+                    <input matInput formControlName="country">
                   </mat-form-field>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Gender</mat-label>
-                    <mat-select formControlName="gender" required>
-                      <mat-option [value]="'male'">
-                        Male
-                      </mat-option>
-                      <mat-option [value]="'female'">
-                        Female
-                      </mat-option>
-                      <mat-option [value]="'other'">
-                        Other
-                      </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="stdForm.get('gender')?.hasError('required')">
-                      Gender is required
-                    </mat-error>
+                    <mat-label>Birth year</mat-label>
+                    <input matInput formControlName="birtYear" type="number" required>
                   </mat-form-field>
                 </div>
               </div>
@@ -75,51 +65,35 @@
                   </mat-form-field>
                 </div>
               </div>
+
               <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Registration Date</mat-label>
-                    <input matInput [matDatepicker]="rpicker" formControlName="rDate" required>
-                    <mat-datepicker-toggle matSuffix [for]="rpicker"></mat-datepicker-toggle>
-                    <mat-datepicker #rpicker></mat-datepicker>
-                    <mat-error *ngIf="stdForm.get('rDate')?.hasError('required')">
-                      Please select date
+                    <mat-label>Parents first name</mat-label>
+                    <input matInput formControlName="parentsFirstName" >
+                    <mat-error *ngIf="stdForm.get('parentsFirstName')?.hasError('required')">
+                      Parents first name is required
                     </mat-error>
                   </mat-form-field>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Select Department</mat-label>
-                    <mat-select formControlName="department" required>
-                      <mat-option [value]="'mechanical'">
-                        Mechanical
-                      </mat-option>
-                      <mat-option [value]="'science'">
-                        Science
-                      </mat-option>
-                      <mat-option [value]="'mathematics'">
-                        Mathematics
-                      </mat-option>
-                      <mat-option [value]="'computer'">
-                        Computer
-                      </mat-option>
-                      <mat-option [value]="'civil'">
-                        Civil
-                      </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="stdForm.get('department')?.hasError('required')">
-                      Select Any Department
+                    <mat-label>Parents last name</mat-label>
+                    <input matInput formControlName="parentsLastName" type="number">
+                    <mat-error *ngIf="stdForm.get('parentsLastName')?.hasError('required')">
+                      Parents first name is required
                     </mat-error>
                   </mat-form-field>
                 </div>
               </div>
+
               <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Parents name</mat-label>
-                    <input matInput formControlName="parentName" required>
-                    <mat-error *ngIf="stdForm.get('parentName')?.hasError('required')">
-                      Parents name is required
+                    <mat-label>Parents Email</mat-label>
+                    <input matInput formControlName="parentsEmail" >
+                    <mat-error *ngIf="stdForm.get('parentsEmail')?.hasError('parentsEmail') && stdForm.get('parentsEmail')?.touched">
+                      Please enter a valid email address
                     </mat-error>
                   </mat-form-field>
                 </div>
@@ -130,25 +104,7 @@
                   </mat-form-field>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-                  <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Date Of Birth</mat-label>
-                    <input matInput [matDatepicker]="picker" formControlName="dob" required>
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                    <mat-error *ngIf="stdForm.get('dob')?.hasError('required')">
-                      Please select date
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-                  <mat-form-field class="example-full-width mb-3" appearance="outline">
-                    <mat-label>Blood Group</mat-label>
-                    <input matInput formControlName="bGroup">
-                  </mat-form-field>
-                </div>
-              </div>
+
               <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
                   <mat-form-field class="example-full-width mb-3" appearance="outline">
@@ -157,12 +113,7 @@
                   </mat-form-field>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-5">
-                  <label>Upload</label>
-                  <app-file-upload formControlName="uploadFile"></app-file-upload>
-                </div>
-              </div>
+
               <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
                   <button class="btn-space" [disabled]="!stdForm.valid " mat-raised-button

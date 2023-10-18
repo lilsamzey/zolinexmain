@@ -43,26 +43,25 @@ export class EditStudentComponent {
   }
   createContactForm(): UntypedFormGroup {
     return this.fb.group({
-      first: [
-        this.formdata.first,
-        [Validators.required, Validators.pattern('[a-zA-Z]+')],
-      ],
-      last: [this.formdata.last],
-      rollNo: [this.formdata.rollNo],
-      gender: [this.formdata.gender, [Validators.required]],
-      mobile: [this.formdata.mobile, [Validators.required]],
-      rDate: [this.formdata.rDate, [Validators.required]],
+      firstName: ['', [Validators.required, Validators.pattern('[a-zA-Z]+')]],
+      lastName: ['',Validators.required],
+      country: ['', [Validators.required]],
+      birtYear: ['', [Validators.required]],
+
       email: [
-        this.formdata.email,
+        '',
         [Validators.required, Validators.email, Validators.minLength(5)],
       ],
-      department: [this.formdata.department],
-      parentName: [this.formdata.parentName, [Validators.required]],
-      parentNo: [this.formdata.parentNo],
-      dob: [this.formdata.dob, [Validators.required]],
-      bGroup: [this.formdata.bGroup],
-      address: [this.formdata.address],
-      uploadFile: [this.formdata.uploadFile],
+      mobile: ['', [Validators.required]],
+      parentsFirstName: ['' ],
+      parentsLastName: [''],
+      parentNo: [''],
+      parentsEmail: [
+        '',
+        [ Validators.email, Validators.minLength(5)],
+      ],
+
+      address: [''],
     });
   }
 }
