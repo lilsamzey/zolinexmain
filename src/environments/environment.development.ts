@@ -2,10 +2,37 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:4200',
-};
+  production: true,
+
+
+  apiUrl: 'http://localhost:3000',
+
+
+
+//Azure Web Service AWS MSSQL
+//apiUrl: 'https://nodejsawssql.azurewebsites.net',
+
+
+
+
+
+
+
+//Render free AWS
+  //apiUrl: 'https://awswindmssqlnodejs.onrender.com',
+
+
+
+//azurezolinex
+  //apiUrl: 'https://zolinexaws.onrender.com',
+
+
+ //apiUrl: 'https://ednonodejs.azurewebsites.net',
+
+
+}
 
 /*
  * For easier debugging in development mode, you can import the following file

@@ -8,7 +8,7 @@ import { Students } from './students.model';
 import { DataSource } from '@angular/cdk/collections';
 
 import {AddStudentComponent} from '../add-student/add-student.component';
-
+import {AuthService} from '../../../core/service/auth.service'
 
 import {
   MatSnackBar,
@@ -17,7 +17,7 @@ import {
 } from '@angular/material/snack-bar';
 import { BehaviorSubject, fromEvent, merge, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FormDialogComponent } from './dialogs/form-dialog/form-dialog.component';
+//import { FormDialogComponent } from './dialogs/form-dialog/form-dialog.component';
 import { DeleteDialogComponent } from './dialogs/delete/delete.component';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -34,29 +34,33 @@ import { formatDate } from '@angular/common';
   templateUrl: './all-students.component.html',
   styleUrls: ['./all-students.component.scss'],
 })
-export class AllStudentsComponent extends UnsubscribeOnDestroyAdapter implements OnInit {
+export class AllStudentsComponent implements OnInit {
 
 
-  displayedColumns = [
-    'select',
-    'img',
-    'rollNo',
-    'name',
-    'department',
-    'gender',
-    'mobile',
-    'email',
-    'date',
-    'actions',
-  ];
 
-  filteredData:any[]=[];
 
-  exampleDatabase!:any;
-  dataSource!: any;
-  selection = new SelectionModel<Students>(true, []);
-  id?: number;
-  students?: Students;
+
+currentPage = 1;
+itemsPerPage = 10; // Default items per page
+totalItems = 0;
+itemsPerPageOptions: number[] = [10, 20, 50, 100, 200];
+
+
+
+
+
+
+  allStudents: Students[]=[];
+
+
+
+
+
+
+
+
+  searchText = '';
+
   breadscrums = [
     {
       title: 'All Student',
@@ -68,182 +72,97 @@ export class AllStudentsComponent extends UnsubscribeOnDestroyAdapter implements
     public httpClient: HttpClient,
     public dialog: MatDialog,
     public studentsService: StudentsService,
-    private snackBar: MatSnackBar
+
   ) {
-    super();
-  }
-  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort!: MatSort;
-  @ViewChild('filter', { static: true }) filter!: ElementRef;
-  @ViewChild(MatMenuTrigger)
-  contextMenu?: MatMenuTrigger;
-  contextMenuPosition = { x: '0px', y: '0px' };
 
-  ngOnInit() {
-    console.log('hello world')
   }
 
 
+  async ngOnInit(): Promise<void> {
 
 
-  addNew() {
-    let tempDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      tempDirection = 'rtl';
-    } else {
-      tempDirection = 'ltr';
-    }
-    const dialogRef = this.dialog.open(AddStudentComponent, {
-      data: {
-        students: this.students,
-        action: 'add',
+
+    this.getAllStudents();
+
+
+
+
+  }
+
+
+
+    getAllStudents(){
+      this.studentsService.getAllStudents().subscribe(
+      (data) => {
+        this.allStudents = data;
+        console.log(this.allStudents);
+
       },
-      direction: tempDirection,
-    });
-    // this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
-    //   if (result === 1) {
-    //     // After dialog is closed we're doing frontend updates
-    //     // For add we're just pushing a new row inside DataServicex
-    //     this.exampleDatabase?.dataChange.value.unshift(
-    //       this.studentsService.getDialogData()
-    //     );
-    //     this.refreshTable();
-    //     this.showNotification(
-    //       'snackbar-success',
-    //       'Add Record Successfully...!!!',
-    //       'bottom',
-    //       'center'
-    //     );
-    //   }
-    // });
+      (error) => {
+        console.error('Error:', error);
+      }
+    );
+}
+
+//  get filteredStudents() {
+//   return this.allStudents.filter(student =>
+//     (student.firstName + ' ' + student.lastName).toLowerCase().includes(this.searchText.toLowerCase()) ||
+//     student.email.toLowerCase().includes(this.searchText.toLowerCase()) ||
+//     student.mobile.toLowerCase().includes(this.searchText.toLowerCase()) ||
+//     student.id.toLowerCase().includes(this.searchText.toLowerCase()) ||
+
+
+//   );
+// }
+
+
+get filteredStudents() {
+  const filtered = this.allStudents?.filter(student =>
+    (student.firstName + ' ' + student.lastName).toLowerCase().includes(this.searchText.toLowerCase()) ||
+    student.email.toLowerCase().includes(this.searchText.toLowerCase()) ||
+    student.mobile.toLowerCase().includes(this.searchText.toLowerCase())
+    // ... add other fields if needed
+  );
+
+  this.totalItems = filtered.length;
+
+  // Logic for pagination
+  const startItem = (this.currentPage - 1) * this.itemsPerPage;
+  const endItem = startItem + this.itemsPerPage;
+
+  return filtered.slice(startItem, endItem);
+}
+
+get maxPage(): number {
+  return Math.ceil(this.totalItems / this.itemsPerPage);
+}
+
+prevPage(): void {
+  if (this.currentPage > 1) {
+    this.currentPage--;
   }
+}
 
-
-
-  editCall(row: Students) {
-    this.id = row.id;
-    let tempDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      tempDirection = 'rtl';
-    } else {
-      tempDirection = 'ltr';
-    }
-    const dialogRef = this.dialog.open(FormDialogComponent, {
-      data: {
-        students: row,
-        action: 'edit',
-      },
-      direction: tempDirection,
-    });
-    // this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
-    //   if (result === 1) {
-    //     // When using an edit things are little different, firstly we find record inside DataService by id
-    //     const foundIndex = this.exampleDatabase?.dataChange.value.findIndex(
-    //       (x) => x.id === this.id
-    //     );
-    //     // Then you update that record using data from dialogData (values you enetered)
-    //     if (foundIndex != null && this.exampleDatabase) {
-    //       this.exampleDatabase.dataChange.value[foundIndex] =
-    //         this.studentsService.getDialogData();
-    //       // And lastly refresh table
-    //       this.refreshTable();
-    //       this.showNotification(
-    //         'black',
-    //         'Edit Record Successfully...!!!',
-    //         'bottom',
-    //         'center'
-    //       );
-    //     }
-    //   }
-    // });
+nextPage(): void {
+  if (this.currentPage < this.maxPage) {
+    this.currentPage++;
   }
+}
 
-
-
-  deleteItem(row: Students) {
-    this.id = row.id;
-    let tempDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
-      tempDirection = 'rtl';
-    } else {
-      tempDirection = 'ltr';
-    }
-    const dialogRef = this.dialog.open(DeleteDialogComponent, {
-      data: row,
-      direction: tempDirection,
-    });
-    // this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
-    //   if (result === 1) {
-    //     const foundIndex = this.exampleDatabase?.dataChange.value.findIndex(
-    //       (x) => x.id === this.id
-    //     );
-    //     // for delete we use splice in order to remove single object from DataService
-    //     if (foundIndex != null && this.exampleDatabase) {
-    //       this.exampleDatabase.dataChange.value.splice(foundIndex, 1);
-    //       this.refreshTable();
-    //       this.showNotification(
-    //         'snackbar-danger',
-    //         'Delete Record Successfully...!!!',
-    //         'bottom',
-    //         'center'
-    //       );
-    //     }
-    //   }
-    // });
-  }
-
-
-  private refreshTable() {
-    this.paginator._changePageSize(this.paginator.pageSize);
-  }
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.renderedData.length;
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.renderedData.forEach((row: Students) =>
-          this.selection.select(row)
-        );
-  }
-
-
-
-
-
-
-
-  refresh(){
-    console.log('refresh')
-  }
-
-
-
-
-  removeSelectedRows(){
-    console.log('refresh')
-  }
-
-
-
-
-  exportExcel(){
-    console.log('refresh')
-  }
-
-
-
-
-
-
-
-
-
+goToPage(page: number): void {
+  this.currentPage = page;
 }
 
 
+updateItemsPerPage() {
+  // Burada sayfa başına kaç öğe gösterileceğini güncelleyebilirsiniz.
+  // Örneğin, sayfayı tekrar yükleyerek verileri güncelleyebilirsiniz.
+   // Eğer bir 'loadStudents' fonksiyonunuz varsa
+}
+
+
+details(student:Students){
+  console.log('student details work')
+}
+
+}

@@ -1,15 +1,40 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Students } from './all-students/students.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from 'environments/environment';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 @Injectable()
 export class StudentsService extends UnsubscribeOnDestroyAdapter {
-  private readonly API_URL = 'assets/data/students.json';
+
+
+
+  private readonly API_URL = `${environment.apiUrl}/students`;
+
   isTblLoading = true;
   dataChange: BehaviorSubject<Students[]> = new BehaviorSubject<Students[]>([]);
   // Temporarily stores data from dialogs
   dialogData!: Students;
+
+ error='';
+
+
+
+  allStudents: Students[]=[];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   constructor(private httpClient: HttpClient) {
     super();
   }
@@ -19,19 +44,48 @@ export class StudentsService extends UnsubscribeOnDestroyAdapter {
   getDialogData() {
     return this.dialogData;
   }
+
+
+
+
+
+
+
+
+
   /** CRUD METHODS */
-  getAllStudentss(): void {
-    this.subs.sink = this.httpClient.get<Students[]>(this.API_URL).subscribe({
-      next: (data) => {
-        this.isTblLoading = false;
-        this.dataChange.next(data);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.isTblLoading = false;
-        console.log(error.name + ' ' + error.message);
-      },
-    });
+  getAllStudents(): Observable<Students[]> {
+
+    return this.httpClient.get<Students[]>(`${this.API_URL}`);
+
+    // return new Promise<Students[]>((resolve, reject) => {
+    //   this.httpClient.get<Students[]>(this.API_URL).subscribe({
+    //     next: (data) => {
+    //       this.isTblLoading = false;
+    //       this.dataChange.next(data);
+    //       this.allStudents = data;
+    //       resolve(data);
+    //     },
+    //     error: (error: HttpErrorResponse) => {
+    //       this.error = 'Failed to get students.'; // Hata mesajını atama
+    //       reject(error);
+    //     },
+    //   });
+    // });
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
   addStudents(students: Students): void {
     this.dialogData = students;
 
